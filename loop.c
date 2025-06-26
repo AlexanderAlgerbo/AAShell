@@ -9,6 +9,19 @@ void myLoop(){
 
     // Might place these in own methods like simulateRaw() and setDefaultState()
     hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    /*
+    I can utilize this to determine if it is interactive capabilites i need or if i simply want to read of a script
+    // May turn readLine into two methods like interactive readLine and another for files. But files is an afterthought or an extra feature.
+    // The focus is on the interactive shell part.
+    DWORD type = GetFileType(hStdin);
+
+    if (type == FILE_TYPE_CHAR) {
+        // It's a terminal (console) — use ReadConsoleInput
+    } else if (type == FILE_TYPE_DISK || type == FILE_TYPE_PIPE) {
+        // It's a file or pipe — use ReadFile or fgets
+    }
+    */
+
     DWORD originalMode;
     // Get console mode sets current mode in originalMode
     GetConsoleMode(hStdin, &originalMode);
@@ -52,8 +65,27 @@ char* ReadLine(){
         // Now i should be able to handle record to detect inputs. So it would be various if statements for various keypresses.
         // We begin with simple key presses and add more functionalty as we go after we get this to work.
         if(record.EventType == KEY_EVENT && record.Event.KeyEvent.bKeyDown){
+            // If a key cannot be represented by ascci we need to use a virtual key code. Backspace needs this for example. fputs("\b \b", stdout);  // erase on screen
             char c = record.Event.KeyEvent.uChar.AsciiChar;
+            
+            if(c == '\r'){
+                // Enter has been pressed and reading should stop. Any other button press should simply be placed in the buffer
+                buffer[pos] = '\0';
+                return buffer;
+            }
+            buffer[pos] = c;
+            pos++;
         }
+
+        
+        // Check buffer size, if exceeded reallocate more memory.
+        if(pos >= buffSize){
+            buffSize *= 2;
+            buffer = realloc(buffer,buffSize);
+            // Maybe check that it succeded and that buffer is not null. Because then we need to end the program.
+        }
+        // If i allow backspace i wonder if the terminal will handle it automatically in "raw" mode or if i will have to send back the current "line"/buffer to the terminal
+
         
     }
 
