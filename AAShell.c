@@ -1,6 +1,7 @@
 #include <stdlib.h>
+#include "loop.h"
 int main(){
 
-    myLoop();
+    Loop();
     return EXIT_SUCCESS;
 }

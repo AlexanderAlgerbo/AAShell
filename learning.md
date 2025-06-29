@@ -1,0 +1,9 @@
+record.Event.KeyEvent.bKeyDown is of type BOOL which is a number(usually 1) if keypress is down and 0 otherwise so in c you can treat it as a boolean in your if statements
+as 0 is equivalent to false and all other numbers are true. This is basically a bool but it predates it as c did not have a built in bool type at the time.
+
+For real time character by character input one will put the terminal in raw mode on unix type machines and simulate it on windows systems. 
+
+Malloc(sizeof(char)* n) allocates n chars in memory.
+
+When using ReadConsoleInput(hInput, &inputRecord, 1, &eventsRead);
+it is fine to send a single reference to one inputrecord as long i say that we only want to read 1 input.
