@@ -62,27 +62,44 @@ char* ReadLine(HANDLE hStdin){
         if(record.EventType == KEY_EVENT && record.Event.KeyEvent.bKeyDown){
             // If a key cannot be represented by ascci we need to use a virtual key code. Backspace needs this for example. fputs("\b \b", stdout);  // erase on screen
             char c = record.Event.KeyEvent.uChar.AsciiChar;
-            
-            if(c == '\r'){
-                // Enter has been pressed and reading should stop. Any other button press should simply be placed in the buffer
+            WORD vk = record.Event.KeyEvent.wVirtualKeyCode;
+
+
+            switch (vk)
+            {
+            case VK_RETURN:
                 putchar('\n');
                 buffer[pos] = '\0';
                 return buffer;
-            }
-            if(record.Event.KeyEvent.wVirtualKeyCode == VK_BACK){
-                // We need to check if we are at pos = 0; if so we should not go back any further
+                break;
+            case VK_BACK:
                 if(pos > 0){
                     pos--;
                     buffer[pos] = '\0';
                     fputs("\b \b",stdout);
                 }
-            }
-            else if(c != 0){
-                // Here we echo the char to terminal
-                putchar(c);
-                //printf("this is the key read: %c\n", c);
-                buffer[pos] = c;
-                pos++;
+                break;
+            case VK_LEFT:
+                
+                break;
+            case VK_RIGHT:
+                
+                break;
+            case VK_UP:
+                
+                break;
+            case VK_DOWN:
+                
+                break;
+            default:
+                if(c != 0){
+                    // Here we echo the char to terminal
+                    putchar(c);
+                    //printf("this is the key read: %c\n", c);
+                    buffer[pos] = c;
+                    pos++;
+                }
+                break;
             }
         }
 
@@ -106,4 +123,7 @@ char **ParseLine(char *line){
 int ExecuteLine(char **args){
     return 1;
 }
+
+
+// Add arrow support next.
 
