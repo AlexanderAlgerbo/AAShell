@@ -31,10 +31,12 @@ void Loop(){
     rawMode |= ENABLE_PROCESSED_INPUT;
     SetConsoleMode(hStdin, rawMode);
     do{
+        fputs("AA>",stdout);
         line = ReadLine(hStdin);
         // Arguments may change for this as i have not yet coded these methods.
         args = ParseLine(line);
         status = ExecuteLine(args);
+        putchar('\n');
     }while(status);
 
     // Returns the mode to original as we exit the shell. Unsure if this will fire if the shell crashes. I do not know if c has try catch so we'll have to see how i might handle that
@@ -63,11 +65,22 @@ char* ReadLine(HANDLE hStdin){
             
             if(c == '\r'){
                 // Enter has been pressed and reading should stop. Any other button press should simply be placed in the buffer
+                putchar('\n');
                 buffer[pos] = '\0';
                 return buffer;
             }
-            if(c != 0){
-                printf("this is the key read: %c\n", c);
+            if(record.Event.KeyEvent.wVirtualKeyCode == VK_BACK){
+                // We need to check if we are at pos = 0; if so we should not go back any further
+                if(pos > 0){
+                    pos--;
+                    buffer[pos] = '\0';
+                    fputs("\b \b",stdout);
+                }
+            }
+            else if(c != 0){
+                // Here we echo the char to terminal
+                putchar(c);
+                //printf("this is the key read: %c\n", c);
                 buffer[pos] = c;
                 pos++;
             }
@@ -80,8 +93,7 @@ char* ReadLine(HANDLE hStdin){
             buffer = realloc(buffer,buffSize);
             // Maybe check that it succeded and that buffer is not null. Because then we need to end the program.
         }
-        // If i allow backspace i wonder if the terminal will handle it automatically in "raw" mode or if i will have to send back the current "line"/buffer to the terminal
-
+        //echoing to terminal so i can begin implementing the backspace handling.
         
     }
 
