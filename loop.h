@@ -17,6 +17,7 @@ char **ParseLine(char *line);
 // Either a void or int. If i return an int it can signify successfull completion and promt the reading of a new line
 int ExecuteLine(char **args);
 
+void ShiftTerminalStringLeft(char *line, int pos);
 #endif
 
 

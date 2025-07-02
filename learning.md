@@ -7,3 +7,6 @@ Malloc(sizeof(char)* n) allocates n chars in memory.
 
 When using ReadConsoleInput(hInput, &inputRecord, 1, &eventsRead);
 it is fine to send a single reference to one inputrecord as long i say that we only want to read 1 input.
+Same this for eventsRead. If we read more we need it to be a
+
+in my for loop my condition was != '0' but what i wanted was '\0' and i had corrupted memory in my "string" because of it which made character shifting in terminal go wrong

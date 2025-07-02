@@ -48,8 +48,8 @@ void Loop(){
 char* ReadLine(HANDLE hStdin){
     int buffSize = 1024;
     int pos = 0;
-    // This malloc with buffSize * sizeof(char) <==> allocate memory of 1 byte * buffsize. So in our case 1024 chars are allocated. 
-    char *buffer = malloc(buffSize *sizeof(char));
+    //We allocate 1024 chars in the memory with initial value '\0' 
+    char *buffer = calloc(buffSize,sizeof(char));
 
     // Will probably have to watch or read some quick documentation just so i understand these better later on.
     INPUT_RECORD record;
@@ -69,18 +69,27 @@ char* ReadLine(HANDLE hStdin){
             {
             case VK_RETURN:
                 putchar('\n');
-                buffer[pos] = '\0';
+                //buffer[pos] = '\0';
                 return buffer;
                 break;
             case VK_BACK:
                 if(pos > 0){
                     pos--;
-                    buffer[pos] = '\0';
-                    fputs("\b \b",stdout);
+
+                    for (int i = pos; buffer[i] != '\0'; i++)
+                    {
+                        // If we have values to the right of our current index we shift them left by one step
+                        buffer[i] = buffer[i+1];
+                    }
+
+                    ShiftTerminalStringLeft(buffer,pos);
+                    //fputs("\b \b",stdout);
                 }
                 break;
             case VK_LEFT:
-                
+                pos--;
+                putchar('\b');
+                // Everything that is to the right needs to move one step to the left.
                 break;
             case VK_RIGHT:
                 
@@ -124,6 +133,21 @@ int ExecuteLine(char **args){
     return 1;
 }
 
+void ShiftTerminalStringLeft(char *line, int pos){
+    // Here we begin with fixing the line
+    // WE use & as line[pos] gives us a value
+    putchar('\b');
+    // So either i get out of bounds or 
+    fputs(&line[pos],stdout);
+    // To "erase the last character"
+    putchar(' ');
+    int length = strlen(line);
+    for (int i = pos; i <= length; i++)
+    {
+        putchar('\b');
+    }
+    
+}
 
 // Add arrow support next.
 
