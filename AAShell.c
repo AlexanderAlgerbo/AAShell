@@ -2,6 +2,6 @@
 #include "loop.h"
 int main(){
 
-    Loop();
+    loop();
     return EXIT_SUCCESS;
 }

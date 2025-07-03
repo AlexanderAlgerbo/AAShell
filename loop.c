@@ -1,7 +1,7 @@
 #include "loop.h"
 #include <windows.h>
 #include <stdio.h>
-void Loop(){
+void loop(){
     // We want to read a line from stdin
     // Then parse it and execute it. our execute method will determines if we will continue reading. By doing so we could input a line like exit 
     char *line;
@@ -32,10 +32,10 @@ void Loop(){
     SetConsoleMode(hStdin, rawMode);
     do{
         fputs("AA>",stdout);
-        line = ReadLine(hStdin);
+        line = readLine(hStdin);
         // Arguments may change for this as i have not yet coded these methods.
-        args = ParseLine(line);
-        status = ExecuteLine(args);
+        args = parseLine(line);
+        status = executeLine(args);
         putchar('\n');
     }while(status);
 
@@ -45,7 +45,7 @@ void Loop(){
 }
 
 
-char* ReadLine(HANDLE hStdin){
+char* readLine(HANDLE hStdin){
     int buffSize = 1024;
     int pos = 0;
     //We allocate 1024 chars in the memory with initial value '\0' 
@@ -76,13 +76,9 @@ char* ReadLine(HANDLE hStdin){
                 if(pos > 0){
                     pos--;
 
-                    for (int i = pos; buffer[i] != '\0'; i++)
-                    {
-                        // If we have values to the right of our current index we shift them left by one step
-                        buffer[i] = buffer[i+1];
-                    }
 
-                    ShiftTerminalStringLeft(buffer,pos);
+
+                    shiftTerminalStringLeft(buffer,pos);
                     //fputs("\b \b",stdout);
                 }
                 break;
@@ -103,8 +99,9 @@ char* ReadLine(HANDLE hStdin){
             default:
                 if(c != 0){
                     // Here we echo the char to terminal
-                    putchar(c);
                     //printf("this is the key read: %c\n", c);
+                    putchar(c);
+                    shiftTerminalStringRight(buffer,pos);
                     buffer[pos] = c;
                     pos++;
                 }
@@ -124,18 +121,23 @@ char* ReadLine(HANDLE hStdin){
     }
 
 }
-char **ParseLine(char *line){
+char **parseLine(char *line){
     printf(line);
     return NULL;
 }
 
-int ExecuteLine(char **args){
+int executeLine(char **args){
     return 1;
 }
 
-void ShiftTerminalStringLeft(char *line, int pos){
+void shiftTerminalStringLeft(char *line, int pos){
     // Here we begin with fixing the line
     // WE use & as line[pos] gives us a value
+    for (int i = pos; line[i] != '\0'; i++)
+    {
+        // If we have values to the right of our current index we shift them left by one step
+        line[i] = line[i + 1];
+    }
     putchar('\b');
     // So either i get out of bounds or 
     fputs(&line[pos],stdout);
@@ -149,5 +151,23 @@ void ShiftTerminalStringLeft(char *line, int pos){
     
 }
 
-// Add arrow support next.
+void shiftTerminalStringRight(char *line,int pos){
+    // We shift everything right by one step
+    int length = strlen(line);
+    for (int i = length-1; i >= pos; i--)
+    {
+        
+        line[i+1] = line[i];
+    }
+    // Now we should have a buffer where everythin from pos and right of it have been shifted right by one step¨
+    // We should then just be able to draw the line from pos and then return to cursor pos.
 
+    fputs(&line[pos+1],stdout);
+    for (int i = pos+1; i <= length; i++)
+    {
+        putchar('\b');
+    }
+}
+
+// Current bug in shifting right: when first time at a cursor pos that already have a char we override it, but after that first one is overriden it works as intended.
+// Probably something to do with my
