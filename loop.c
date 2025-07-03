@@ -84,11 +84,12 @@ char* readLine(HANDLE hStdin){
                 break;
             case VK_LEFT:
                 pos--;
-                putchar('\b');
+                printf("\033[D");
                 // Everything that is to the right needs to move one step to the left.
                 break;
             case VK_RIGHT:
-                
+                pos++;
+                printf("\033[C");
                 break;
             case VK_UP:
                 
@@ -144,10 +145,9 @@ void shiftTerminalStringLeft(char *line, int pos){
     // To "erase the last character"
     putchar(' ');
     int length = strlen(line);
-    for (int i = pos; i <= length; i++)
-    {
-        putchar('\b');
-    }
+    int l = length - (pos+1);
+    printf("\033[%dD",length - (pos-1));
+
     
 }
 
@@ -160,14 +160,13 @@ void shiftTerminalStringRight(char *line,int pos){
         line[i+1] = line[i];
     }
     // Now we should have a buffer where everythin from pos and right of it have been shifted right by one step¨
-    // We should then just be able to draw the line from pos and then return to cursor pos.
+    // We should then just be able to draw the line from pos and then return to cursor pos.printf("\033[D");  // move left safely
+    // printf("\033[C");  // move right safely
 
     fputs(&line[pos+1],stdout);
-    for (int i = pos+1; i <= length; i++)
-    {
-        putchar('\b');
-    }
+    int l = length - (pos+1);
+    printf("\033[%dD",length - (pos+1));
+
 }
 
-// Current bug in shifting right: when first time at a cursor pos that already have a char we override it, but after that first one is overriden it works as intended.
-// Probably something to do with my
+
