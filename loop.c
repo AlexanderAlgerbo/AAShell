@@ -2,13 +2,11 @@
 #include <windows.h>
 #include <stdio.h>
 void loop(){
-    // We want to read a line from stdin
-    // Then parse it and execute it. our execute method will determines if we will continue reading. By doing so we could input a line like exit 
+
     char *line;
     char **args;
     int status;
 
-    // Might place these in own methods like simulateRaw() and setDefaultState()
     HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
     /*
     I can utilize this to determine if it is interactive capabilites i need or if i simply want to read of a script
@@ -22,7 +20,9 @@ void loop(){
         // It's a file or pipe — use ReadFile or fgets
     }
     */
-
+    // this should allocate 64 pointers to strings which i then can allocate in readLine.
+    int amountOfLines = 64;
+    char **lines = calloc(amountOfLines,sizeof(char*));
     DWORD originalMode;
     // Get console mode sets current mode in originalMode
     GetConsoleMode(hStdin, &originalMode);
@@ -32,22 +32,21 @@ void loop(){
     SetConsoleMode(hStdin, rawMode);
     do{
         fputs("AA>",stdout);
-        line = readLine(hStdin);
+        line = readLine(hStdin,lines);
         // Arguments may change for this as i have not yet coded these methods.
         args = parseLine(line);
         status = executeLine(args);
         putchar('\n');
     }while(status);
-
-    // Returns the mode to original as we exit the shell. Unsure if this will fire if the shell crashes. I do not know if c has try catch so we'll have to see how i might handle that
     SetConsoleMode(hStdin,originalMode);
     // This works because any non-zero value is the same as the boolean true in 
 }
 
 
-char* readLine(HANDLE hStdin){
+char* readLine(HANDLE hStdin,char **lines){
     int buffSize = 1024;
     int pos = 0;
+    int clPos = 0;// The command line position. 
     //We allocate 1024 chars in the memory with initial value '\0' 
     char *buffer = calloc(buffSize,sizeof(char));
 
@@ -57,50 +56,75 @@ char* readLine(HANDLE hStdin){
     // Infinite loop as we always want to read input for as long as the shell is active. Only end of line EOF or /n, ctrl +c will end the loop.
     while(1){
         ReadConsoleInput(hStdin,&record,1,&read);
-        // Now i should be able to handle record to detect inputs. So it would be various if statements for various keypresses.
-        // We begin with simple key presses and add more functionalty as we go after we get this to work.
         if(record.EventType == KEY_EVENT && record.Event.KeyEvent.bKeyDown){
-            // If a key cannot be represented by ascci we need to use a virtual key code. Backspace needs this for example. fputs("\b \b", stdout);  // erase on screen
             char c = record.Event.KeyEvent.uChar.AsciiChar;
             WORD vk = record.Event.KeyEvent.wVirtualKeyCode;
 
-
+            lines[0] = buffer;
             switch (vk)
             {
             case VK_RETURN:
                 putchar('\n');
-                //buffer[pos] = '\0';
+                for (int i = lengthOfArray(lines)-1; i >= 0; i--)
+                {
+                    
+                    lines[i+1] = lines[i];
+                }
                 return buffer;
                 break;
             case VK_BACK:
                 if(pos > 0){
                     pos--;
-
-
-
                     shiftTerminalStringLeft(buffer,pos);
-                    //fputs("\b \b",stdout);
                 }
                 break;
             case VK_LEFT:
                 pos--;
                 printf("\033[D");
-                // Everything that is to the right needs to move one step to the left.
                 break;
             case VK_RIGHT:
                 pos++;
                 printf("\033[C");
                 break;
             case VK_UP:
+                if(clPos <63 && lines[clPos + 1] != NULL){
+                    clPos++;
+                    printf("\033[2K\r");     // Clears line and now we print lines[clPos]
+                    //buffer = lines[clPos]; // lines[0] should still point to the old buffer if i have done this correctly and every char should be remembered if we then go down in the array
+                    stringCopy(buffer,lines[clPos]);
+                    pos = strlen(buffer);
+                    fputs("AA>",stdout);
+                    printf(buffer);
+
+                }
+                
                 
                 break;
             case VK_DOWN:
                 
+                if(clPos > 0 && lines[clPos-1] != NULL){
+                    clPos--;
+                    printf("\033[2K\r");
+                    fputs("AA>",stdout);
+                    //buffer = lines[clPos];
+                    stringCopy(buffer,lines[clPos]);
+                    pos = strlen(buffer);
+                    printf(buffer);
+                }
+                else if (clPos == 0){
+                    printf("\033[2K\r");
+                    fputs("AA>",stdout);
+
+                    if(lines[0] != NULL){
+                        stringCopy(buffer,lines[clPos]);
+                        pos = strlen(buffer);
+                        printf(buffer);
+                    }
+                }
                 break;
             default:
                 if(c != 0){
-                    // Here we echo the char to terminal
-                    //printf("this is the key read: %c\n", c);
+
                     putchar(c);
                     shiftTerminalStringRight(buffer,pos);
                     buffer[pos] = c;
@@ -111,13 +135,10 @@ char* readLine(HANDLE hStdin){
         }
 
         
-        // Check buffer size, if exceeded reallocate more memory.
         if(pos >= buffSize){
             buffSize *= 2;
             buffer = realloc(buffer,buffSize);
-            // Maybe check that it succeded and that buffer is not null. Because then we need to end the program.
         }
-        //echoing to terminal so i can begin implementing the backspace handling.
         
     }
 
@@ -139,7 +160,8 @@ void shiftTerminalStringLeft(char *line, int pos){
         // If we have values to the right of our current index we shift them left by one step
         line[i] = line[i + 1];
     }
-    putchar('\b');
+
+    printf("\033[D");
     // So either i get out of bounds or 
     fputs(&line[pos],stdout);
     // To "erase the last character"
@@ -167,6 +189,22 @@ void shiftTerminalStringRight(char *line,int pos){
     int l = length - (pos+1);
     printf("\033[%dD",length - (pos+1));
 
+}
+
+int lengthOfArray(char** array){
+    int size = 0;
+    while(array[size] != NULL){
+        size++;
+    }
+    return size;
+}
+
+void stringCopy(char *buffer,char *src){
+    int length = strlen(src) +1;// +1 because of null termination.
+    memcpy(buffer,src,length);// Because i already have my buffer allocated in memory already this should co through and copy the memory of src to buffer. 
+    // Should probably add a memory reallocation here as well because src could be larger than buffer if i previously wrote a line that surpassed 1024 chars.
+    // It is becoming more and more relevant for me to write a reallocation code.
+    
 }
 
 
