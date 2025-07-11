@@ -32,4 +32,10 @@ So the only bug at the moment that i find is that when index is zero we do not c
 The reason it is not cleared is probably that we have copied every line onto buffer which we have equal to lines[0]. So lines[0] would have become a former line
  In addition to that index 1 and 2 seems to be the former line
 
- SO up arrow key goes through all indexes and index 1 and 2 are as they should be. It seems like the problem is not that there are 2 multiples of last line but that it takes two presses of down arrow key to go down from index 1 to 0. Which is very strange.
+ SO up arrow key goes through all indexes and index 1 and 2 are as they should be. It seems like the problem is not that there are 2 multiples of last line but that it takes two presses of down arrow key to go down from index 1 to 0. Which is very strange. 
+ Answer: Figured it out. IN my if statement i have clPos > 0 and then in the statement i do clPos--,
+
+ So only bug left is that sometimes when returning and we have something in lines[0] or tempLine we print more the next time we press any character button.
+ It looks like it somehow prints the previous line somehow. So somewhere we may accidentaly overwrite or but the previous line into a charbuffer that then gets printed when we press a button
+
+ So something with & and getting the reference seems to fuck it all up. It seems like we return to what we had. And if it is smaller or less than the line former the memory space of that former line will not have been reset. So when we then print it out from pos +1 we get everything after. Might even be that we somehow just get a reference to the former line for some reason. First thought would be to reset the rest of the "string" or char pointer when  we copy to make sure that the memory gets cleaned up i guess. Another thought is if i can simply free up buffer and allocate a new one. But it might be simpler to go through the rest of the string and reset it.

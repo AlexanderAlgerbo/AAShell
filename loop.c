@@ -87,8 +87,10 @@ char* readLine(HANDLE hStdin,char **lines){
                 }
                 break;
             case VK_RIGHT:
-                pos++;
-                printf("\033[C");
+                if(pos < strlen(buffer)){
+                    pos++;
+                    printf("\033[C");
+                }
                 break;
             case VK_UP:
                 if(clPos == 0){
@@ -96,8 +98,7 @@ char* readLine(HANDLE hStdin,char **lines){
                 }
                 if(clPos <63 && lines[clPos + 1] != NULL){
                     clPos++;
-                    printf("\033[2K\r");     // Clears line and now we print lines[clPos]
-                    //buffer = lines[clPos]; // lines[0] should still point to the old buffer if i have done this correctly and every char should be remembered if we then go down in the array
+                    printf("\033[2K\r");
                     stringCopy(buffer,lines[clPos]);
                     pos = strlen(buffer);
                     fputs("AA>",stdout);
@@ -108,7 +109,7 @@ char* readLine(HANDLE hStdin,char **lines){
                 break;
             case VK_DOWN:
                 
-                if(clPos > 0 && lines[clPos-1] != NULL){
+                if(clPos > 1){
                     clPos--;
                     printf("\033[2K\r");
                     fputs("AA>",stdout);
@@ -117,10 +118,12 @@ char* readLine(HANDLE hStdin,char **lines){
                     pos = strlen(buffer);
                     printf(buffer);
                 }
-                else if (clPos == 0){
+                else if (clPos == 1){
+                    clPos--;
                     printf("\033[2K\r");
                     fputs("AA>",stdout);
 
+                    // It will never be null. 
                     if(lines[0] != NULL){
                         stringCopy(buffer,tempLine);
                         pos = strlen(buffer);
@@ -130,7 +133,8 @@ char* readLine(HANDLE hStdin,char **lines){
                 break;
             default:
                 if(c != 0){
-
+                    // I think the problem is around here and i believe it to be the buffer that is wrong
+                    
                     putchar(c);
                     shiftTerminalStringRight(buffer,pos);
                     buffer[pos] = c;
@@ -187,8 +191,10 @@ void shiftTerminalStringRight(char *line,int pos){
         
         line[i+1] = line[i];
     }
-
-    fputs(&line[pos+1],stdout);
+    
+    fputs(&line[pos+1],stdout); //So we get problem here. So if we refference the line we seem to point at a previous line
+    //printf(line);
+    //printf("\n");
     int l = length - (pos+1);
     printf("\033[%dD",length - (pos+1));
 
@@ -207,6 +213,13 @@ void stringCopy(char *buffer,char *src){
     memcpy(buffer,src,length);// Because i already have my buffer allocated in memory already this should co through and copy the memory of src to buffer. 
     // Should probably add a memory reallocation here as well because src could be larger than buffer if i previously wrote a line that surpassed 1024 chars.
     // It is becoming more and more relevant for me to write a reallocation code.
+    // While (char != '\0') after length make it '\0'
+    for (int i = length; buffer[i] != '\0'; i++)
+    {
+        buffer[i] = '\0';
+        /* code */
+    }
+    
     
 }
 
