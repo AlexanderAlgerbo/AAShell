@@ -49,6 +49,8 @@ char* readLine(HANDLE hStdin,char **lines){
     int clPos = 0;// The command line position. 
     //We allocate 1024 chars in the memory with initial value '\0' 
     char *buffer = calloc(buffSize,sizeof(char));
+    char *tempLine = calloc(buffSize,sizeof(char));
+
 
     // Will probably have to watch or read some quick documentation just so i understand these better later on.
     INPUT_RECORD record;
@@ -79,14 +81,19 @@ char* readLine(HANDLE hStdin,char **lines){
                 }
                 break;
             case VK_LEFT:
-                pos--;
-                printf("\033[D");
+                if(pos > 0){
+                    pos--;
+                    printf("\033[D");
+                }
                 break;
             case VK_RIGHT:
                 pos++;
                 printf("\033[C");
                 break;
             case VK_UP:
+                if(clPos == 0){
+                    stringCopy(tempLine,lines[clPos]);
+                }
                 if(clPos <63 && lines[clPos + 1] != NULL){
                     clPos++;
                     printf("\033[2K\r");     // Clears line and now we print lines[clPos]
@@ -97,7 +104,6 @@ char* readLine(HANDLE hStdin,char **lines){
                     printf(buffer);
 
                 }
-                
                 
                 break;
             case VK_DOWN:
@@ -116,7 +122,7 @@ char* readLine(HANDLE hStdin,char **lines){
                     fputs("AA>",stdout);
 
                     if(lines[0] != NULL){
-                        stringCopy(buffer,lines[clPos]);
+                        stringCopy(buffer,tempLine);
                         pos = strlen(buffer);
                         printf(buffer);
                     }
@@ -181,9 +187,6 @@ void shiftTerminalStringRight(char *line,int pos){
         
         line[i+1] = line[i];
     }
-    // Now we should have a buffer where everythin from pos and right of it have been shifted right by one step¨
-    // We should then just be able to draw the line from pos and then return to cursor pos.printf("\033[D");  // move left safely
-    // printf("\033[C");  // move right safely
 
     fputs(&line[pos+1],stdout);
     int l = length - (pos+1);

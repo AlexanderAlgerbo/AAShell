@@ -27,4 +27,9 @@ Important to add. As i have dynamically allocated arrays i will need no free eve
 I will also need to make a recalloc function becuase of how i have implemented my project. But as it is very rare that you would need to exceed 1024 characters to write the program
 you would wish to run i will have that as an extra thing to add after i have gotten everything into working order.
 
-Copy works as intended. Now i need to look into down arrow key as that one print the wrong thing if i have pressed down arrow multiple times when im at pos 1 or 0. It tends to print ed or two chars which i cannot remove so i would assume my pos is not carried over. At the same time if i were to have something in buffer it is not carried over if i press arrow up once and then down once. Probably need to reset clPos as well
+So the only bug at the moment that i find is that when index is zero we do not clear the
+
+The reason it is not cleared is probably that we have copied every line onto buffer which we have equal to lines[0]. So lines[0] would have become a former line
+ In addition to that index 1 and 2 seems to be the former line
+
+ SO up arrow key goes through all indexes and index 1 and 2 are as they should be. It seems like the problem is not that there are 2 multiples of last line but that it takes two presses of down arrow key to go down from index 1 to 0. Which is very strange.
