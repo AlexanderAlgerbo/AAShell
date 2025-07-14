@@ -143,8 +143,7 @@ char* readLine(HANDLE hStdin,char **lines){
                 break;
             }
         }
-
-        
+ 
         if(pos >= buffSize){
             buffSize *= 2;
             buffer = realloc(buffer,buffSize);
@@ -153,7 +152,26 @@ char* readLine(HANDLE hStdin,char **lines){
     }
 
 }
+
 char **parseLine(char *line){
+    // Might start simple an simply go through the line, whenever a blankspace is found everything from beginningPos to curPos will be copied to a new string.
+    int startPos = 0;
+    int pos = 0;
+    // i use calloc because i want them to be initialized as null. The only annoying part is that there is no reCalloc so i will have to make ony myself.
+    char **args = calloc(8,sizeof(char *));
+    // Unsure of what a good size for each char pointer but each arg should not be uneccessarily large. Maybe 64 is a good start. As one may want to send file paths which can be long
+    for (size_t i = 0; i < strlen(line); i++)
+    {
+        // Maybe a switch case is more ellegant here as it is a char which will always be a single value
+        if(line[i] ==' '){
+            //Split
+        }
+        else if(line[i] == '#'){
+            // Stop, we will simply ignore the rest
+        }
+
+    }
+    
     printf(line);
     return NULL;
 }
@@ -172,19 +190,14 @@ void shiftTerminalStringLeft(char *line, int pos){
     }
 
     printf("\033[D");
-    // So either i get out of bounds or 
     fputs(&line[pos],stdout);
-    // To "erase the last character"
     putchar(' ');
     int length = strlen(line);
     int l = length - (pos+1);
-    printf("\033[%dD",length - (pos-1));
-
-    
+    printf("\033[%dD",length - (pos-1));   
 }
 
 void shiftTerminalStringRight(char *line,int pos){
-    // We shift everything right by one step
     int length = strlen(line);
     for (int i = length-1; i >= pos; i--)
     {
@@ -192,9 +205,7 @@ void shiftTerminalStringRight(char *line,int pos){
         line[i+1] = line[i];
     }
     
-    fputs(&line[pos+1],stdout); //So we get problem here. So if we refference the line we seem to point at a previous line
-    //printf(line);
-    //printf("\n");
+    fputs(&line[pos+1],stdout); 
     int l = length - (pos+1);
     printf("\033[%dD",length - (pos+1));
 

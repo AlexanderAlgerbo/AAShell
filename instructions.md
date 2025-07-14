@@ -39,3 +39,13 @@ The reason it is not cleared is probably that we have copied every line onto buf
  It looks like it somehow prints the previous line somehow. So somewhere we may accidentaly overwrite or but the previous line into a charbuffer that then gets printed when we press a button
 
  So something with & and getting the reference seems to fuck it all up. It seems like we return to what we had. And if it is smaller or less than the line former the memory space of that former line will not have been reset. So when we then print it out from pos +1 we get everything after. Might even be that we somehow just get a reference to the former line for some reason. First thought would be to reset the rest of the "string" or char pointer when  we copy to make sure that the memory gets cleaned up i guess. Another thought is if i can simply free up buffer and allocate a new one. But it might be simpler to go through the rest of the string and reset it.
+
+ Time for parsing, and here i need to determine what functionality i want to achieve for my shell. As of now it might be easiest to start of with simply splitting on black space as well as comments handling.
+ And then if i every feel like it, variable handling and piping and wildcard handling. Where wildcard will run everything that has the following text. So if i turn in *.txt it will expand into all text files.
+
+
+
+ Make a recalloc so that i can dynamically reallocate the memory if my buffer when needed.
+ To do tomorrow: Create switch case for my parser. Create unit tests and a makefile that will compile everything, run tests, return results and then run the shell program.
+
+ NitPickings: When switching between past command lines written. AA> to signify that we are in the shell gets reset as well. Which is simply unnecessary. It is because i clear the whole line and it should be an easy fix but it is mainly a graphical annoyance that doesn't affect anything else so i will fix it after i am done with simple parts of everything else.

@@ -35,3 +35,7 @@ when clearing a line it is important to return cursor to beginning otherwise pri
 If i want to "simulate" private functions to encapsulate a part of my code i can declare them static. Then they only show up as accessible in that header and source file.
 
 Calloc is a decent way to initialize a "safe" string/buffer when you want to be able to use strlen and such while building it, as long as i make sure that it is properly null terminated in the end. Which i do when pressing enter. Also need to make sure that you cannot write to the last index before allocating more memory to it as that could potentially allow one to overwrite last char that needs to be null terminated. Otherwise methods like printf and strlen will continue reading the memory after your buffer has ended.
+
+When allocating memory the size of the data and other meta data is stored in the beginnning of the memory space allocated. Say you were to allocate 10 chars. The space would be slightly larger to accomodate this metadata.
+
+When freeing memory it is important to also turn the pointer null so that you do not continue pointing to memory that is freed as that causes undefined behaviour.
