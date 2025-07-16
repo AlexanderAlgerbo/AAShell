@@ -39,3 +39,13 @@ Calloc is a decent way to initialize a "safe" string/buffer when you want to be 
 When allocating memory the size of the data and other meta data is stored in the beginnning of the memory space allocated. Say you were to allocate 10 chars. The space would be slightly larger to accomodate this metadata.
 
 When freeing memory it is important to also turn the pointer null so that you do not continue pointing to memory that is freed as that causes undefined behaviour.
+
+Switch case utilizes a jump table for simple cases and binary search for more complicated. Respectively O(1) and O(log(n)) time complexity. While if statements go through every case until it finds the one it is looking for. So O(n). 
+
+For my parser i could at the moment simply use strtok to tokenize it based on delimeters such as ' ' and '#'. But to enable easy expansion for things like quotation handling and others i make my own parsing function.
+
+Unsure of why MSYS is slower at writing outputs but it could be the emulation of a posix environment that creates overhead that slows it down.
+
+For parsing i could simply give pointers to the original line where i have allocated memory of a certain length. But by doing this i compromise the args if my line is ever changed and i cannot reliably change each argument without affecting the line. Copying is safer and will avoid unnecessary bugs.
+
+when using execvp to execture args it is important to make sure args is null terminated and that every singular argument is null terminated as well. Otherwise it would continue to read the memory after our arguments/argument has ended.
