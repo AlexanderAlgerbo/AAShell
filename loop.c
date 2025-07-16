@@ -51,17 +51,12 @@ char *readLine(HANDLE hStdin, char **lines)
 {
   int buffSize = 1024;
   int pos = 0;
-  int clPos = 0; // The command line position.
-  // We allocate 1024 chars in the memory with initial value '\0'
+  int clPos = 0;
   char *buffer = calloc(buffSize, sizeof(char));
   char *tempLine = calloc(buffSize, sizeof(char));
 
-  // Will probably have to watch or read some quick documentation just so i
-  // understand these better later on.
   INPUT_RECORD record;
   DWORD read;
-  // Infinite loop as we always want to read input for as long as the shell is
-  // active. Only end of line EOF or /n, ctrl +c will end the loop.
   while (1)
   {
     ReadConsoleInput(hStdin, &record, 1, &read);
@@ -175,7 +170,8 @@ char **parseLine(char *line)
   int pos = 0;
   int nbrArgs = 0;
   char **args = calloc(8, sizeof(char *));
-  for (size_t i = 0; i < strlen(line); i++)
+  int comment = 1;
+  for (size_t i = 0; i < strlen(line) && comment; i++)
   {
     pos = i;
     switch (line[i])
@@ -191,7 +187,9 @@ char **parseLine(char *line)
       }
       break;
     case '#':
-      // COmment and ignore the rest
+      // We make pos -- so that the # is not added as a part of the last string
+      pos--;
+      comment = 0;
       break;
     default:
       if (startPos == -1)
@@ -204,14 +202,20 @@ char **parseLine(char *line)
 
   if (startPos != -1)
   {
-    int length = pos - startPos;
+    // Right i cannot utilize pos here. Rather i want to use length of my line.
+    int length = pos + 1 - startPos;
     args[nbrArgs] = calloc(length + 1, sizeof(char));
     memcpy(args[nbrArgs], line + startPos, length);
     startPos = -1;
     nbrArgs++;
   }
   printf("%d", nbrArgs);
-  return NULL;
+  for (size_t i = 0; i < nbrArgs; i++)
+  {
+    printf(args[i]); // So i either get segmentetion fault because i surpass the number of args or i get segmentation fault because i incorrectly make an argument of the last line
+  }
+
+  return args;
 }
 
 int executeLine(char **args) { return 1; }
