@@ -48,4 +48,6 @@ The reason it is not cleared is probably that we have copied every line onto buf
  Make a recalloc so that i can dynamically reallocate the memory if my buffer when needed.
  To do tomorrow: Create switch case for my parser. Create unit tests and a makefile that will compile everything, run tests, return results and then run the shell program.
 
- NitPickings: When switching between past command lines written. AA> to signify that we are in the shell gets reset as well. Which is simply unnecessary. It is because i clear the whole line and it should be an easy fix but it is mainly a graphical annoyance that doesn't affect anything else so i will fix it after i am done with simple parts of everything else.
+ NitPickings: When switching between past command lines written. AA> to signify that we are in the shell gets reset as well. Which is simply unnecessary. It is because i clear the whole line and it should be an easy fix but it is mainly a graphical annoyance that doesn't affect anything else so i will fix it after i am done with simple parts of everything else. It is also not really noticed the majority of time on powershell. For some reason it seems like MSYS terminal is slower
+
+ Have started learning about launching processes in windows.

@@ -49,3 +49,18 @@ Unsure of why MSYS is slower at writing outputs but it could be the emulation of
 For parsing i could simply give pointers to the original line where i have allocated memory of a certain length. But by doing this i compromise the args if my line is ever changed and i cannot reliably change each argument without affecting the line. Copying is safer and will avoid unnecessary bugs.
 
 when using execvp to execture args it is important to make sure args is null terminated and that every singular argument is null terminated as well. Otherwise it would continue to read the memory after our arguments/argument has ended.
+
+
+Starting a process in windows: 
+
+Starting a process has a lot of logic behind it. You need a EPROCESS kernel object, process environment block, thread environment block, creating a thread in specified state, establish handles, environment, directory and more. For my part the CreateProcess of the Windows api takes care of these and we can specify path, arguments, its primary thread, environment and more.
+One can pass whole environment blocks, Unicode or ANSI and an initial directory. If you pass NULL the child process inherits the caller/programs environment and directory and security protocols.
+
+Seems there is a higher level of of launching processes in a shell. Where you could implement key words like print, open and such plus a file, the shell then consults file associations and user settings to choose the right program to launch the file with.
+
+In modern windows STARTUPINFOEX and PROC_THREAD_ATTRIBUTE_LIST can be used to manipulate extended attributes But for my simple shell these are quite unnecessary. More useful when i need more detailed security and such.
+
+So for my project it should be enough to use CreateProcess. Might investigate a bit more on ShellExecuteEx as it seems interesting for a more seamless user experience when you want to open a file. If i ever want to start a new process in a managed code language like java , c# or any other that is run in a jvm or .net common language runtime i can use Process.Start (UseShellExecute=false).
+
+it seems like ShellExecuteEx is a windows api function i can utilize. It uses the windows shell to figure out what executable should open it.BOOL ShellExecuteEx(LPSHELLEXECUTEINFO lpExecInfo); is the signatue, LPSHELLEXECUTEINFO is a data structure you fill with (file,verbs, flags, etc.)
+When i have been given a start file that is not an exe, i could probably assume that ShellExecuteEx should be used as i should then have been given a verb or something like that.
