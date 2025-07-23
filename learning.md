@@ -64,3 +64,5 @@ So for my project it should be enough to use CreateProcess. Might investigate a 
 
 it seems like ShellExecuteEx is a windows api function i can utilize. It uses the windows shell to figure out what executable should open it.BOOL ShellExecuteEx(LPSHELLEXECUTEINFO lpExecInfo); is the signatue, LPSHELLEXECUTEINFO is a data structure you fill with (file,verbs, flags, etc.)
 When i have been given a start file that is not an exe, i could probably assume that ShellExecuteEx should be used as i should then have been given a verb or something like that.
+
+There's a lot of different format specifiers when you want to print a string with variables. The ones i have made use of as of now are %s <==> string, %d <==> int, %c <==> char
