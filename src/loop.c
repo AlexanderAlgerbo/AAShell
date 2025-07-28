@@ -70,7 +70,7 @@ char *readLine(HANDLE hStdin, char **lines)
       {
       case VK_RETURN:
         putchar('\n');
-        for (int i = lengthOfArray(lines) - 1; i >= 0; i--)
+        for (int i = countWords(lines) - 1; i >= 0; i--)
         {
 
           lines[i + 1] = lines[i];
@@ -235,7 +235,6 @@ void shiftTerminalStringLeft(char *line, int pos)
   fputs(&line[pos], stdout);
   putchar(' ');
   int length = strlen(line);
-  int l = length - (pos + 1);
   printf("\033[%dD", length - (pos - 1));
 }
 
@@ -249,11 +248,10 @@ void shiftTerminalStringRight(char *line, int pos)
   }
 
   fputs(&line[pos + 1], stdout);
-  int l = length - (pos + 1);
   printf("\033[%dD", length - (pos + 1));
 }
-
-int lengthOfArray(char **array)
+// As our program only fills our array of words sequentially we only count words sequentially as well and stop att first NULL.
+int countWords(char **array)
 {
   int size = 0;
   while (array[size] != NULL)
