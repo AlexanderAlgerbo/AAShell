@@ -66,3 +66,50 @@ it seems like ShellExecuteEx is a windows api function i can utilize. It uses th
 When i have been given a start file that is not an exe, i could probably assume that ShellExecuteEx should be used as i should then have been given a verb or something like that.
 
 There's a lot of different format specifiers when you want to print a string with variables. The ones i have made use of as of now are %s <==> string, %d <==> int, %c <==> char
+
+PROCESS_INFORMATION data object of the windows api gets filled with information of the process we create. It contains information about the newly created process and its primary thread, including:
+
+hProcess — a handle to the new process, hThread — a handle to the new thread in that process, dwProcessId — the process ID, dwThreadId — the thread ID
+
+A handle in neither a data object that can interfere with a process or a thread nor a pointer to where exactly this process is. It is more like a key. Unsure of why you get both id and handle when using createProcess for the PROCESS_INFORMATION but it seems like the id cannot be used to act or query the process or thread. Though one can if one only possesses the id create a handle to the process or thread. 
+
+If i have understood correctly one gets both Handle and id because one might want to pass along the id to another process, meaning another program may want to access the process you started, or when logging information or having closed the handle you can utilize the id to repopen it. As the process may not be done yet.
+
+PID's are assigned incrementally and reset when restarting the computer.
+
+This is the function i will use to start processes with everytime my first argument is an exe.
+BOOL CreateProcessA(
+  LPCSTR                lpApplicationName,
+  LPSTR                 lpCommandLine,
+  LPSECURITY_ATTRIBUTES lpProcessAttributes,
+  LPSECURITY_ATTRIBUTES lpThreadAttributes,
+  BOOL                  bInheritHandles,
+  DWORD                 dwCreationFlags,
+  LPVOID                lpEnvironment,
+  LPCSTR                lpCurrentDirectory,
+  LPSTARTUPINFOA        lpStartupInfo,
+  LPPROCESS_INFORMATION lpProcessInformation
+);
+
+
+MakeFile can be used to compile and run a lot of files at one. It is a lot more efficient as you can make sure that only the files that you have changed something in are recompiled. Instead of them all. For my project it is not as necessary but as the files increase the time it takes to compile increases. It does this through checking timestamps on where what was changed. Every file you declare in target: dependencies is checked
+
+6. Pattern Rule for Compiling .c to .o
+makefile
+Kopiera
+Redigera
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+This rule tells Make how to turn a .c file into a .o file:
+
+%.o = any file ending in .o.
+
+%.c = the corresponding .c file.
+
+The command:
+
+-c means "compile but don’t link" (create a .o file).
+
+$< is replaced with the .c file.
+
+$@ is replaced with the .o file.
