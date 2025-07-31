@@ -218,7 +218,25 @@ char **parseLine(char *line)
   return args;
 }
 
-int executeLine(char **args) { return 1; }
+int executeLine(char **args)
+{
+  // So we begin with Creating two data objects from the windows library. We need the PROCESS_INFORMATION and startInformation dataobject
+  // We begin with the code for if args one is an exe file. I will later add the check for it as well.
+  PROCESS_INFORMATION procINFO;
+  STARTUPINFO startInfo = {sizeof(startInfo)};
+
+  if (CreateProcess(NULL, args[0], NULL, NULL, FALSE, 0, NULL, NULL, &startInfo, &procINFO))
+  {
+    WaitForSingleObject(procINFO.hProcess, INFINITE);
+
+    // Could get an exit code with DWORD exit and then GetExitCode(PROCESS Handle, &exit);
+
+    CloseHandle(procINFO.hProcess);
+    CloseHandle(procINFO.hThread);
+  }
+
+  return 1;
+}
 
 void shiftTerminalStringLeft(char *line, int pos)
 {

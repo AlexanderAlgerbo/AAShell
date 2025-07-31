@@ -51,3 +51,7 @@ The reason it is not cleared is probably that we have copied every line onto buf
  NitPickings: When switching between past command lines written. AA> to signify that we are in the shell gets reset as well. Which is simply unnecessary. It is because i clear the whole line and it should be an easy fix but it is mainly a graphical annoyance that doesn't affect anything else so i will fix it after i am done with simple parts of everything else. It is also not really noticed the majority of time on powershell. For some reason it seems like MSYS terminal is slower
 
  Have started learning about launching processes in windows.
+
+ I am going to make unit tests and a makefile script to automatically compile and run my program and tests.
+
+ If one wants knowingly want to run really long programms that has potential to get stuck it may be useful to be able to add a flag which my shell checks for that ensures that we do not wait for the program infinitely.
