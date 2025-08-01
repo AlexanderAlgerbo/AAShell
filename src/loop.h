@@ -29,6 +29,8 @@ int countWords(char **array);
 
 void stringCopy(char *buffer, char *src);
 
+char *combineArgs(char **args);
+
 #endif
 
 // Functions like fgets() reads from a memory until they hit '/0' character.

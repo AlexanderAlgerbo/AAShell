@@ -90,6 +90,11 @@ BOOL CreateProcessA(
   LPSTARTUPINFOA        lpStartupInfo,
   LPPROCESS_INFORMATION lpProcessInformation
 );
+An early windows standard which confused me is that LP stands for long pointer, The A in LPSTARTUPINFOA is to represent ANSI(ASCII) version, If W it means wide (Unicode). LP was used because the systems back in those days were 16 bit and there were different types of pointers. Near pointers (16-bit), far pointers (32-bit with segment+offset) and long pointers (32-bit flat pointers). Segment and offset were used on old systems to determine the real address. The memory was larger than what the 16 bit register could handle, 64 kb, and so the memory was split into segments and offset to place you at the start of your data in that segment.
+
+When using createProcess you have two data structs you send to createProcess which are important, PROCESSINFORMATION and STARTINFO. PROCESSINFO is described above and STARTINFO is information on how a window should be created for the process.
+
+Seems like you send the whole commandline to the createProcess. Meaning my parsing of the strings was incredibly unnecessary if i simply leave it as is and do not handle built ins as well. So now i have kind of forced my hand to handle built ins as well so that my parse method was not created unecessarily.
 
 
 MakeFile can be used to compile and run a lot of files at one. It is a lot more efficient as you can make sure that only the files that you have changed something in are recompiled. Instead of them all. For my project it is not as necessary but as the files increase the time it takes to compile increases. It does this through checking timestamps on where what was changed. Every file you declare in target: dependencies is checked

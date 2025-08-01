@@ -222,6 +222,10 @@ int executeLine(char **args)
 {
   // So we begin with Creating two data objects from the windows library. We need the PROCESS_INFORMATION and startInformation dataobject
   // We begin with the code for if args one is an exe file. I will later add the check for it as well.
+
+  // We reconstruc the string here.
+  char *cmd = combineArgs(args);
+
   PROCESS_INFORMATION procINFO;
   STARTUPINFO startInfo = {sizeof(startInfo)};
 
@@ -293,4 +297,26 @@ void stringCopy(char *buffer, char *src)
     buffer[i] = '\0';
     /* code */
   }
+}
+
+char *combineArgs(char **args)
+{
+  // I calculate size to allocate
+  size_t length = 0;
+  size_t argCount = countWords(args);
+  for (size_t i = 0; i < argCount; i++)
+  {
+    /* code */
+    length += strlen(args[i]);
+    if (i - 1 > argCount)
+    {
+      length += 1;
+    }
+  }
+  length += 1;
+  // Allocate the line
+  char *line;
+
+  // Recombine it
+  return line;
 }
