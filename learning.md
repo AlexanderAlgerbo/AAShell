@@ -118,3 +118,6 @@ The command:
 $< is replaced with the .c file.
 
 $@ is replaced with the .o file.
+
+
+Found a annoying bug which seems to be called ghost spacing in terminals and printing. Ghost spaces are basically what happens because previous input is not removed and i only overwrite from a certain point i risk certain elements being leftOver. Unsure of why i get the leftover spaces. It seems as if i print AB__CD, where _ = space and insert Z. We shift our string so we get ABZ__CD. Put we only print Z__CD_ So we previously printed 6 characters and this time only 5. So the last column has a character that therefore remains. It would likely be inproper cursor movement that did not act as it should that made it act up.

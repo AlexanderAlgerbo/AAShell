@@ -151,6 +151,7 @@ char *readLine(HANDLE hStdin, char **lines)
           shiftTerminalStringRight(buffer, pos);
           buffer[pos] = c;
           pos++;
+          fflush(stdout);
         }
         break;
       }
@@ -270,7 +271,13 @@ void shiftTerminalStringRight(char *line, int pos)
   }
 
   fputs(&line[pos + 1], stdout);
-  printf("\033[%dD", length - (pos + 1));
+  // size_t temp = strlen(&line[pos + 1]);
+  // printf("%d", temp);
+  int tailLength = strlen(&line[pos + 1]) - 1; // subtract inserted char
+  if (tailLength > 0)
+    printf("\033[%dD", tailLength + 1);
+  // Only a problem when we are at the end and we do not need to shift anything to the right
+  // New bug: WHen placing a char in the middle it gets placed to the right one step in the terminal
 }
 // As our program only fills our array of words sequentially we only count words sequentially as well and stop att first NULL.
 int countWords(char **array)
