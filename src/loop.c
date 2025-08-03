@@ -279,10 +279,12 @@ void shiftTerminalStringRight(char *line, int pos)
   // Only a problem when we are at the end and we do not need to shift anything to the right
   // New bug: WHen placing a char in the middle it gets placed to the right one step in the terminal
 }
-// As our program only fills our array of words sequentially we only count words sequentially as well and stop att first NULL.
+// As our program only fills our array of words sequentially we only count words sequentially as well and stop att first NULL. We also cannot fill it completely, the last index has to be
+// null terminated
 int countWords(char **array)
 {
   int size = 0;
+  //
   while (array[size] != NULL)
   {
     size++;
@@ -311,22 +313,23 @@ char *combineArgs(char **args)
   // I calculate size to allocate
   size_t length = 0;
   size_t argCount = countWords(args);
+  // So countWords is wrong. It returns 6 here for some reason
   for (size_t i = 0; i < argCount; i++)
   {
     /* code */
     length += strlen(args[i]);
-    if (i - 1 > argCount)
+    if (i < argCount - 1)
     {
       length += 1;
     }
   }
   length += 1; // For a null terminator
+
   // Allocate the line. As i will fill it with immediately it may be better to use malloc but cba at the moment
   char *line = calloc(length, sizeof(char));
   if (!line)
   {
   }
-
   // Recombine it
   for (size_t i = 0; i < argCount; i++)
   {

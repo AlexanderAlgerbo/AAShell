@@ -58,13 +58,13 @@ int test_LengthOfArrayOfCharPtr()
     success = assert_int_Eq(countWords(lines), 1);
     // Might be relevant to change parts of lines and
 
-    if (success)
+    if (!success)
     {
-        printf("Length of array of words test succeeded");
-        return 1;
+        printf("Length of array of words test succeeded \n");
+        return 0;
     }
     printf("Size of Array Test failed");
-    return 0;
+    return 1;
 }
 void test_CharPtrCopy()
 {
@@ -113,14 +113,16 @@ void test_Combine_Of_Args()
     // So we allocate the arg pointers. Then we allocate the char *. We can do this because our recombine method utilized strcat which copies the string/char* and appends it to the end of a line
     args[0] = "Hello";
     args[1] = "World";
-    args[2] = "Working";
-    if (strcmp(args[0], "Hello") != 0 || strcmp(args[1], "World") != 0 || strcmp(args[2], "Working") != 0)
+
+    printf("This is the count at this time in test %d \n", countWords(args));
+    if (strcmp(args[0], "Hello") != 0 || strcmp(args[1], "World") != 0)
     {
         fprintf(stderr, "The initialization of the different args have not worked correctly");
     }
+    // Segmentation Fault happens here
     char *line = combineArgs(args);
 
-    if (assert_CharArray_Eq(line, "Hello World Working") != 0)
+    if (assert_CharArray_Eq(line, "Hello World") != 0)
     {
         fprintf(stderr, "The combination of args did not work. The combineArgs(args) did not return the expected result");
         return;
