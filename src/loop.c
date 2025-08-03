@@ -320,10 +320,24 @@ char *combineArgs(char **args)
       length += 1;
     }
   }
-  length += 1;
-  // Allocate the line
-  char *line;
+  length += 1; // For a null terminator
+  // Allocate the line. As i will fill it with immediately it may be better to use malloc but cba at the moment
+  char *line = calloc(length, sizeof(char));
+  if (!line)
+  {
+  }
 
   // Recombine it
+  for (size_t i = 0; i < argCount; i++)
+  {
+    // We go through all arguments. Place them into the cmd line
+    strcat(line, args[i]);
+    // places a blankspace until we are at the last arg
+    if (i < argCount - 1)
+    {
+      strcat(line, " ");
+    }
+  }
+
   return line;
 }
