@@ -134,7 +134,6 @@ void test_Combine_Of_Args()
 int main()
 {
     test_CharPtrCopy();
-    printf("Arrived here");
     test_LengthOfArrayOfCharPtr();
     test_Combine_Of_Args();
 }

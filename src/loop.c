@@ -9,22 +9,7 @@ void loop()
   int status;
 
   HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
-  /*
-  I can utilize this to determine if it is interactive capabilites i need or if
-  i simply want to read of a script
-  // May turn readLine into two methods like interactive readLine and another
-  for files. But files is an afterthought or an extra feature.
-  // The focus is on the interactive shell part.
-  DWORD type = GetFileType(hStdin);
 
-  if (type == FILE_TYPE_CHAR) {
-      // It's a terminal (console) — use ReadConsoleInput
-  } else if (type == FILE_TYPE_DISK || type == FILE_TYPE_PIPE) {
-      // It's a file or pipe — use ReadFile or fgets
-  }
-  */
-  // this should allocate 64 pointers to strings which i then can allocate in
-  // readLine.
   int amountOfLines = 64;
   char **lines = calloc(amountOfLines, sizeof(char *));
   DWORD originalMode;
@@ -38,13 +23,11 @@ void loop()
   {
     fputs("AA>", stdout);
     line = readLine(hStdin, lines);
-    // Arguments may change for this as i have not yet coded these methods.
     args = parseLine(line);
     status = executeLine(args);
     putchar('\n');
   } while (status);
   SetConsoleMode(hStdin, originalMode);
-  // This works because any non-zero value is the same as the boolean true in
 }
 
 char *readLine(HANDLE hStdin, char **lines)
@@ -121,7 +104,6 @@ char *readLine(HANDLE hStdin, char **lines)
           clPos--;
           printf("\033[2K\r");
           fputs("AA>", stdout);
-          // buffer = lines[clPos];
           stringCopy(buffer, lines[clPos]);
           pos = strlen(buffer);
           printf(buffer);
@@ -131,8 +113,6 @@ char *readLine(HANDLE hStdin, char **lines)
           clPos--;
           printf("\033[2K\r");
           fputs("AA>", stdout);
-
-          // It will never be null.
           if (lines[0] != NULL)
           {
             stringCopy(buffer, tempLine);
@@ -144,8 +124,6 @@ char *readLine(HANDLE hStdin, char **lines)
       default:
         if (c != 0)
         {
-          // I think the problem is around here and i believe it to be the
-          // buffer that is wrong
 
           putchar(c);
           shiftTerminalStringRight(buffer, pos);
@@ -188,7 +166,6 @@ char **parseLine(char *line)
       }
       break;
     case '#':
-      // We make pos -- so that the # is not added as a part of the last string
       pos--;
       comment = 0;
       break;
@@ -203,7 +180,6 @@ char **parseLine(char *line)
 
   if (startPos != -1)
   {
-    // Right i cannot utilize pos here. Rather i want to use length of my line.
     int length = pos + 1 - startPos;
     args[nbrArgs] = calloc(length + 1, sizeof(char));
     memcpy(args[nbrArgs], line + startPos, length);
@@ -245,12 +221,8 @@ int executeLine(char **args)
 
 void shiftTerminalStringLeft(char *line, int pos)
 {
-  // Here we begin with fixing the line
-  // WE use & as line[pos] gives us a value
   for (int i = pos; line[i] != '\0'; i++)
   {
-    // If we have values to the right of our current index we shift them left by
-    // one step
     line[i] = line[i + 1];
   }
 
@@ -271,16 +243,12 @@ void shiftTerminalStringRight(char *line, int pos)
   }
 
   fputs(&line[pos + 1], stdout);
-  // size_t temp = strlen(&line[pos + 1]);
-  // printf("%d", temp);
+
   int tailLength = strlen(&line[pos + 1]) - 1; // subtract inserted char
   if (tailLength > 0)
     printf("\033[%dD", tailLength + 1);
-  // Only a problem when we are at the end and we do not need to shift anything to the right
-  // New bug: WHen placing a char in the middle it gets placed to the right one step in the terminal
 }
-// As our program only fills our array of words sequentially we only count words sequentially as well and stop att first NULL. We also cannot fill it completely, the last index has to be
-// null terminated
+
 int countWords(char **array)
 {
   int size = 0;
@@ -295,12 +263,7 @@ int countWords(char **array)
 void stringCopy(char *buffer, char *src)
 {
   int length = strlen(src) + 1; // +1 because of null termination.
-  memcpy(buffer, src, length);  // Because i already have my buffer allocated in memory already
-                                // this should co through and copy the memory of src to buffer.
-  // Should probably add a memory reallocation here as well because src could be
-  // larger than buffer if i previously wrote a line that surpassed 1024 chars.
-  // It is becoming more and more relevant for me to write a reallocation code.
-  // While (char != '\0') after length make it '\0'
+  memcpy(buffer, src, length);
   for (int i = length; buffer[i] != '\0'; i++)
   {
     buffer[i] = '\0';
