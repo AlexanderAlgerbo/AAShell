@@ -201,19 +201,26 @@ int executeLine(char **args)
   // We begin with the code for if args one is an exe file. I will later add the check for it as well.
 
   // We reconstruc the string here.
+  // Somewhere around here we check the first argument if it is a argument. If not we check if the second argument or third is a code file Or maybe ShellExecuteEx
   char *cmd = combineArgs(args);
-
   PROCESS_INFORMATION procINFO;
   STARTUPINFO startInfo = {sizeof(startInfo)};
-
-  if (CreateProcess(NULL, args[0], NULL, NULL, FALSE, 0, NULL, NULL, &startInfo, &procINFO))
+  // printf("%s\n", cmd);
+  // return 1;
+  if (CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &startInfo, &procINFO))
   {
+    printf("CreateProcess worked\n");
     WaitForSingleObject(procINFO.hProcess, INFINITE);
-
+    printf("We passed the wait for object\n");
     // Could get an exit code with DWORD exit and then GetExitCode(PROCESS Handle, &exit);
 
     CloseHandle(procINFO.hProcess);
     CloseHandle(procINFO.hThread);
+  }
+  else
+  {
+    DWORD err = GetLastError();
+    printf("Failed to launch, Error: %d", err);
   }
 
   return 1;

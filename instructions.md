@@ -63,3 +63,7 @@ The reason it is not cleared is probably that we have copied every line onto buf
  So after two blankspaces if you return to the position right after a char it seems to start printing everything to the left. As it happens when pressing blankspace it would be reasonable to assume the bug is in the shiftRight method as blankspace is treates as anyother normal charinput. So i will have to check the shiftRight method tommorow. Somehow the string itself is changed which i thought shiftterminal string right did not do. But more on it tommorow.
 
  So it seems like the string itself is not changed in values but it seems like the whole string is shifted to the right and not only everything on the left. While 
+
+ What to do next: Write ShellExecuteEx code to run for certain keywords. Write builtins. Create a method for formatting error codes so that it prints something readable and then create reCalloc method.
+
+ A bug that does not really bother me: When launching for example notepad.exe it returns immediately after starting notepad. Notepad stays up but my waitforObject passes. When starting a specific txt file in notepad it waits properly. As of this moment i am unsure of why but i will continue as it does not impact my usage of the shell.
