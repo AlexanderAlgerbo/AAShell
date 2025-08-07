@@ -1,6 +1,18 @@
 #include "loop.h"
 #include <stdio.h>
 #include <windows.h>
+#include <ctype.h>
+#include "commands.h"
+#include "logic.h"
+
+typedef void (*CommandHandler)(char **args);
+
+typedef struct
+{
+  char *name;
+  CommandHandler handler;
+} Command;
+
 void loop()
 {
 
@@ -197,11 +209,33 @@ char **parseLine(char *line)
 
 int executeLine(char **args)
 {
-  // So we begin with Creating two data objects from the windows library. We need the PROCESS_INFORMATION and startInformation dataobject
-  // We begin with the code for if args one is an exe file. I will later add the check for it as well.
 
   // We reconstruc the string here.
   // Somewhere around here we check the first argument if it is a argument. If not we check if the second argument or third is a code file Or maybe ShellExecuteEx
+
+  // Because i write all commands in lower case i will have to make sure i transform the first argument to lower char when comparing it to my list of commands.
+  char *temp = calloc(strlen(args[0]), sizeof(char));
+  stringCopy(temp, args[0]);
+  for (size_t i = 0; i < strlen(temp); i++)
+  {
+    temp[i] = tolower(temp[i]);
+  }
+
+  Command commands[] = {
+      {"pwd", handlePWD}, {NULL, NULL}};
+
+  for (size_t i = 0; commands[i].name != NULL; i++)
+  {
+    // If we recognize a command we run the handle method for that command and return.
+    if (strcmp(commands[i].name, temp) == 0)
+    {
+
+      commands[i].handler(args);
+      printf("\n");
+    }
+  }
+
+  // We check the first argument, if we recognize it as a command that is in commands we
   char *cmd = combineArgs(args);
   PROCESS_INFORMATION procINFO;
   STARTUPINFO startInfo = {sizeof(startInfo)};
@@ -254,17 +288,6 @@ void shiftTerminalStringRight(char *line, int pos)
   int tailLength = strlen(&line[pos + 1]) - 1; // subtract inserted char
   if (tailLength > 0)
     printf("\033[%dD", tailLength + 1);
-}
-
-int countWords(char **array)
-{
-  int size = 0;
-  //
-  while (array[size] != NULL)
-  {
-    size++;
-  }
-  return size;
 }
 
 void stringCopy(char *buffer, char *src)

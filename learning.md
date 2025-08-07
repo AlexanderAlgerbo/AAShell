@@ -65,7 +65,10 @@ So for my project it should be enough to use CreateProcess. Might investigate a 
 it seems like ShellExecuteEx is a windows api function i can utilize. It uses the windows shell to figure out what executable should open it.BOOL ShellExecuteEx(LPSHELLEXECUTEINFO lpExecInfo); is the signatue, LPSHELLEXECUTEINFO is a data structure you fill with (file,verbs, flags, etc.)
 When i have been given a start file that is not an exe, i could probably assume that ShellExecuteEx should be used as i should then have been given a verb or something like that.
 
-There's a lot of different format specifiers when you want to print a string with variables. The ones i have made use of as of now are %s <==> string, %d <==> int, %c <==> char
+There's a lot of different format specifiers when you want to print a string with variables. The ones i have made use of as of now are 
+%s <==> string, 
+%d <==> int, 
+%c <==> char
 
 PROCESS_INFORMATION data object of the windows api gets filled with information of the process we create. It contains information about the newly created process and its primary thread, including:
 
@@ -121,3 +124,13 @@ $@ is replaced with the .o file.
 
 
 Found a annoying bug which seems to be called ghost spacing in terminals and printing. Ghost spaces are basically what happens because previous input is not removed and i only overwrite from a certain point i risk certain elements being leftOver. Unsure of why i get the leftover spaces. It seems as if i print AB__CD, where _ = space and insert Z. We shift our string so we get ABZ__CD. Put we only print Z__CD_ So we previously printed 6 characters and this time only 5. So the last column has a character that therefore remains. It would likely be inproper cursor movement that did not act as it should that made it act up.
+
+GetLastError() works by retrieving the last error code on the calling thread. Every thread has a local variable that contains the last error. When a windows variable fails it uses SetLastError() which we can then retrieve
+
+by using typedef we can for example make all function that return void and take and char **args be of a single type. Meaning that we could initialize a struct that takes that type and then send any such function i want. It is similar to polymorphism in OOP languages. Where i could create a class with a virtual method and then replace it's functionality with what want in a child class with override. Only that now i do not have the bulk of creating multiple classes and can write all my methods in one file.
+
+If i want private methods that are only accessable by that code in that file i can declare and define it only in the source file as well as give it the static attribute.
+
+Arrays are reduced to sending the pointer to the first element. So it would be like sending a char pointer.
+
+Because C lacks garbage collection it is very rare for methods that are outside your code to initialize and allocate memory to variable. As then freeing that memory becomes a pain. 

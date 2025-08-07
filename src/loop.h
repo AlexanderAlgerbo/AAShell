@@ -25,8 +25,6 @@ void shiftTerminalStringLeft(char *line, int pos);
 // When writing a char everything that in not null terminated will be shifted to the right one step
 void shiftTerminalStringRight(char *line, int pos);
 
-int countWords(char **array);
-
 void stringCopy(char *buffer, char *src);
 
 char *combineArgs(char **args);

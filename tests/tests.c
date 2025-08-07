@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../src/loop.h"
+#include "../src/logic.h"
 
 int assert_int_Eq(int expected, int actual)
 {

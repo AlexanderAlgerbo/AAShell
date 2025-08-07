@@ -64,6 +64,11 @@ The reason it is not cleared is probably that we have copied every line onto buf
 
  So it seems like the string itself is not changed in values but it seems like the whole string is shifted to the right and not only everything on the left. While 
 
- What to do next: Write ShellExecuteEx code to run for certain keywords. Write builtins. Create a method for formatting error codes so that it prints something readable and then create reCalloc method.
 
  A bug that does not really bother me: When launching for example notepad.exe it returns immediately after starting notepad. Notepad stays up but my waitforObject passes. When starting a specific txt file in notepad it waits properly. As of this moment i am unsure of why but i will continue as it does not impact my usage of the shell.
+  
+  What to do next: Write ShellExecuteEx code to run for certain keywords. Write builtins. Create a method for formatting error codes so that it prints something readable and then create reCalloc method.
+
+  We start With writing built ins. Then we may use shellExecuteEx if i feel like continuing.
+
+  Features: Can start exe files, compile code.
