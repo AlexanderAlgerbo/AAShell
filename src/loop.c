@@ -198,22 +198,18 @@ char **parseLine(char *line)
     startPos = -1;
     nbrArgs++;
   }
+  /*
   printf("%d", nbrArgs);
   for (size_t i = 0; i < nbrArgs; i++)
   {
-    printf(args[i]); // So i either get segmentetion fault because i surpass the number of args or i get segmentation fault because i incorrectly make an argument of the last line
+    printf(args[i]);
   }
-
+  */
   return args;
 }
 
 int executeLine(char **args)
 {
-
-  // We reconstruc the string here.
-  // Somewhere around here we check the first argument if it is a argument. If not we check if the second argument or third is a code file Or maybe ShellExecuteEx
-
-  // Because i write all commands in lower case i will have to make sure i transform the first argument to lower char when comparing it to my list of commands.
   char *temp = calloc(strlen(args[0]), sizeof(char));
   stringCopy(temp, args[0]);
   for (size_t i = 0; i < strlen(temp); i++)
@@ -222,25 +218,23 @@ int executeLine(char **args)
   }
 
   Command commands[] = {
-      {"pwd", handlePWD}, {NULL, NULL}};
+      {"pwd", handlePWD}, {"cd", handleCD}, {NULL, NULL}};
 
   for (size_t i = 0; commands[i].name != NULL; i++)
   {
-    // If we recognize a command we run the handle method for that command and return.
     if (strcmp(commands[i].name, temp) == 0)
     {
 
       commands[i].handler(args);
+      // May want My handle functions to return an int so that i can judge if they were successful or not. But as i print the failure in the functions either way it probably does not matter
       printf("\n");
+      return 1;
     }
   }
 
-  // We check the first argument, if we recognize it as a command that is in commands we
   char *cmd = combineArgs(args);
   PROCESS_INFORMATION procINFO;
   STARTUPINFO startInfo = {sizeof(startInfo)};
-  // printf("%s\n", cmd);
-  // return 1;
   if (CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &startInfo, &procINFO))
   {
     printf("CreateProcess worked\n");
@@ -255,6 +249,7 @@ int executeLine(char **args)
   {
     DWORD err = GetLastError();
     printf("Failed to launch, Error: %d", err);
+    return 0;
   }
 
   return 1;

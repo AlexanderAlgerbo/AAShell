@@ -69,6 +69,6 @@ The reason it is not cleared is probably that we have copied every line onto buf
   
   What to do next: Write ShellExecuteEx code to run for certain keywords. Write builtins. Create a method for formatting error codes so that it prints something readable and then create reCalloc method.
 
-  We start With writing built ins. Then we may use shellExecuteEx if i feel like continuing.
+  We start With writing built ins. Then we may use shellExecuteEx if i feel like continuing. Next time i will first make sure we return after built in.
 
   Features: Can start exe files, compile code.

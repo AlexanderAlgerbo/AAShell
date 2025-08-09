@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "loop.h": "c",
-        "*.rh": "c"
+        "*.rh": "c",
+        "direct.h": "c"
     }
 }
