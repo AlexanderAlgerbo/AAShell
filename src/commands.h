@@ -21,4 +21,6 @@ void handleClear(char **args);
 
 void handleLS(char **args);
 
+char *appendWildCard(char *path);
+
 #endif

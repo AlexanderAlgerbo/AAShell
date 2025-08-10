@@ -218,17 +218,18 @@ int executeLine(char **args)
   }
 
   Command commands[] = {
-      {"pwd", handlePWD}, {"cd", handleCD}, {NULL, NULL}};
+      {"pwd", handlePWD}, {"cd", handleCD}, {"ls", handleLS}, {NULL, NULL}};
 
   for (size_t i = 0; commands[i].name != NULL; i++)
   {
     if (strcmp(commands[i].name, temp) == 0)
     {
-
+      // We could add an int for each command that is a maximum amount of arguments for that command. Which could help us filter out wrong args here instead of in every single function.
       commands[i].handler(args);
       // May want My handle functions to return an int so that i can judge if they were successful or not. But as i print the failure in the functions either way it probably does not matter
       printf("\n");
       return 1;
+      // seems we did not return as we should
     }
   }
 

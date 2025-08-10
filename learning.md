@@ -134,3 +134,13 @@ If i want private methods that are only accessable by that code in that file i c
 Arrays are reduced to sending the pointer to the first element. So it would be like sending a char pointer.
 
 Because C lacks garbage collection it is very rare for methods that are outside your code to initialize and allocate memory to variable. As then freeing that memory becomes a pain. 
+
+to begin with i could not understand why getcwd returns the char pointer we send in. There a couple of reasons it does this. 1 it means the method can indicate success or failure by returning NULL in case of failure. 2 It’s a common C idiom to return the buffer pointer so you can do things like: printf("CWD: %s\n", getcwd(buffer, size));. 3 POSIX says getcwd(NULL, 0) can allocate a buffer internally and return a pointer to it. So if there is an implementation that allocates memory dynamically the returned pointer would be different than the one we send in and we will want the new pointer
+
+When running my shell in MSYS terminal it can run pwd with createprocess. This is because msys gives acces to a pwd.exe or binary that launches. In powershell it acts as it should and fails on createProcess. 
+
+Windows API contains functions like FINDFIRSTDATA(); where i can send a path and a WIN32_FIND_DATA structure to get a handle to a file. 
+
+To compare flags like dwFileAttributes we need to use bitwise and because the attributes are stored as bit flags where each bit means something different. So we simply compare HIdden attribute x02 with whatever attribute our data has.
+
+In windows compiling changed code for my shell through the AAShell.exe would not work as exe files are locked when running and it would fail as long as we try and overwrite the exe file. In linux it would work but that does not mean the program is interrupted because it is already loaded into memory. So it would continue running and you would temporarily have two version of the exe file, one running in memory and one on the disk.
