@@ -2,4 +2,5 @@
 #define LOGIC_H
 
 int countWords(char **array);
+char *combineArgs(char **args);
 #endif

@@ -43,6 +43,21 @@ void handleCD(char **args)
     // Will not print what i changed to because it will be displayed already if successfull
 }
 
+void handleEcho(char **args)
+{
+    char *buffer = calloc(100, sizeof(char));
+    if (countWords(args) < 2)
+    {
+        buffer[0] = '\0';
+    }
+    else
+    {
+        buffer = combineArgs(&args[1]);
+    }
+
+    printf("%s", buffer);
+}
+
 void handleLS(char **args)
 {
     // Should also let one send a file path that we can place in findfirstFile.
