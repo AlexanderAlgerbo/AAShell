@@ -121,4 +121,39 @@ char *appendWildCard(char *path)
     return buffer;
 }
 
+void handleClear(char **args)
+{
+    // we simply ignore args as we will always clear everything.
+    HANDLE hConsole;
+    COORD coordScreen = {0, 0};
+    DWORD cCharsWritten;
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    DWORD dwConSize;
+
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hConsole == INVALID_HANDLE_VALUE)
+    {
+        fprintf(stderr, "Could not establish a handle to standart input");
+    }
+    printf("Clearing");
+    if (!GetConsoleScreenBufferInfo(hConsole, &csbi))
+    {
+        return;
+    }
+
+    dwConSize = csbi.dwSize.X * csbi.dwSize.Y;
+
+    if (!FillConsoleOutputCharacter(hConsole, (TCHAR)' ', dwConSize, coordScreen, &cCharsWritten))
+    {
+        return;
+    }
+
+    if (!FillConsoleOutputAttribute(hConsole, csbi.wAttributes, dwConSize, coordScreen, &cCharsWritten))
+    {
+        return;
+    }
+
+    SetConsoleCursorPosition(hConsole, coordScreen);
+}
+
 // So it does not work as intended at the moment

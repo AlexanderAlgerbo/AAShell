@@ -218,7 +218,7 @@ int executeLine(char **args)
   }
 
   Command commands[] = {
-      {"pwd", handlePWD}, {"cd", handleCD}, {"ls", handleLS}, {"echo", handleEcho}, {NULL, NULL}};
+      {"pwd", handlePWD}, {"cd", handleCD}, {"ls", handleLS}, {"echo", handleEcho}, {"clear", handleClear}, {NULL, NULL}};
 
   for (size_t i = 0; commands[i].name != NULL; i++)
   {
