@@ -7,6 +7,7 @@
 #include <string.h>
 #include <direct.h>
 #include <windows.h>
+#include <sys/stat.h>
 #include "logic.h"
 void handlePWD(char **args)
 {
@@ -154,6 +155,46 @@ void handleClear(char **args)
     }
 
     SetConsoleCursorPosition(hConsole, coordScreen);
+}
+
+void handleMakeDir(char **args)
+{
+    if (countWords(args) != 2)
+    {
+        fprintf(stderr, "Wrong amount of args");
+        return;
+    }
+
+    if (!_mkdir(args[1]))
+    {
+        printf("Created directory %s", args[1]);
+    }
+    else
+    {
+        fprintf(stderr, "Failed to create directory");
+    }
+}
+
+void handleRMDir(char **args)
+{
+    if (countWords(args) != 2)
+    {
+        fprintf(stderr, "Wrong amount of args");
+        return;
+    }
+
+    if (!_rmdir(args[1]))
+    {
+        printf("Removed directory %s", args[1]);
+    }
+    else
+    {
+        fprintf(stderr, "Failed to remove directory");
+        if (errno == ENOENT)
+        {
+            fprintf(stderr, ": No entry of that name");
+        }
+    }
 }
 
 // So it does not work as intended at the moment
