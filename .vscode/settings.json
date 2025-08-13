@@ -2,6 +2,7 @@
     "files.associations": {
         "loop.h": "c",
         "*.rh": "c",
-        "direct.h": "c"
+        "direct.h": "c",
+        "cstdlib": "c"
     }
 }

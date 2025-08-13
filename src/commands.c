@@ -197,4 +197,41 @@ void handleRMDir(char **args)
     }
 }
 
+void handleOpen(char **args)
+{
+    // In both open and find we check if arguments are as expected and then give runShellExec the args.
+}
+
+void runShellExec(char *verb, char *file, char *args)
+{
+    SHELLEXECUTEINFO shExInfo = {0};
+    shExInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+    shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+    shExInfo.hwnd = NULL;
+    shExInfo.lpVerb = verb;       // the action
+    shExInfo.lpFile = file;       // file or program
+    shExInfo.lpParameters = args; // optional arguments
+    shExInfo.lpDirectory = NULL;
+    shExInfo.nShow = SW_SHOWNORMAL;
+    shExInfo.hInstApp = NULL;
+
+    if (ShellExecuteEx(&shExInfo))
+    {
+        WaitForSingleObject(shExInfo.hProcess, INFINITE);
+        CloseHandle(shExInfo.hProcess);
+    }
+    else
+    {
+        DWORD err = GetLastError;
+        LPSTR msgBuf = NULL;
+
+        FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&msgBuf, 0, NULL);
+
+        printf("Error %lu: %s\n", err, msgBuf ? msgBuf : "Unknown error");
+        LocalFree(msgBuf);
+    }
+}
+
 // So it does not work as intended at the moment

@@ -17,10 +17,12 @@ void handleLS(char **args);
 
 void handleOpen(char **args);
 
-void handleExit(char **args);
-
 void handleFind(char **args);
 
+void handleExit(char **args);
+
 char *appendWildCard(char *path);
+
+void runShellExec(char *verb, char *file, char *args);
 
 #endif

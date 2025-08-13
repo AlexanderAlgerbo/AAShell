@@ -72,3 +72,5 @@ The reason it is not cleared is probably that we have copied every line onto buf
   We start With writing built ins. Then we may use shellExecuteEx if i feel like continuing. Next time i will first make sure we return after built in.
 
   Features: Can start exe files, compile code.
+
+  
