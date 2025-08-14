@@ -15,7 +15,7 @@ void handleClear(char **args);
 
 void handleLS(char **args);
 
-void handleOpen(char **args);
+void handleShellExec(char **args);
 
 void handleFind(char **args);
 

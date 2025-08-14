@@ -197,9 +197,23 @@ void handleRMDir(char **args)
     }
 }
 
-void handleOpen(char **args)
+void handleShellExec(char **args)
 {
     // In both open and find we check if arguments are as expected and then give runShellExec the args.
+    char *arguments = NULL;
+    // I think this is the only case i need to handle. As shellExecuteEx should fail if the file does not exist or parameters are wrong.
+    size_t len = countWords(args);
+    if (len < 2)
+    {
+        fprintf(stderr, "No file was sent to open");
+        return;
+    }
+    if (len > 2)
+    {
+        arguments = combineArgs(&args[2]); // Combines all parameters for shellExecute.
+    }
+
+    runShellExec(args[0], args[1], arguments);
 }
 
 void runShellExec(char *verb, char *file, char *args)
@@ -222,7 +236,7 @@ void runShellExec(char *verb, char *file, char *args)
     }
     else
     {
-        DWORD err = GetLastError;
+        DWORD err = GetLastError();
         LPSTR msgBuf = NULL;
 
         FormatMessageA(
