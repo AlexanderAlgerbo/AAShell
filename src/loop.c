@@ -218,7 +218,7 @@ int executeLine(char **args)
   }
 
   Command commands[] = {
-      {"pwd", handlePWD}, {"cd", handleCD}, {"ls", handleLS}, {"echo", handleEcho}, {"clear", handleClear}, {"mkdir", handleMakeDir}, {"rmdir", handleRMDir}, {"open", handleShellExec}, {"find", handleShellExec}, {NULL, NULL}};
+      {"pwd", handlePWD}, {"cd", handleCD}, {"ls", handleLS}, {"echo", handleEcho}, {"clear", handleClear}, {"mkdir", handleMakeDir}, {"rmdir", handleRMDir}, {"open", handleShellExec}, {"find", handleShellExec}, {"exit", handleExit}, {NULL, NULL}};
 
   for (size_t i = 0; commands[i].name != NULL; i++)
   {

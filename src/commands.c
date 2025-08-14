@@ -248,4 +248,9 @@ void runShellExec(char *verb, char *file, char *args)
     }
 }
 
+void handleExit(char **args)
+{
+    exit(0);
+}
+
 // So it does not work as intended at the moment
