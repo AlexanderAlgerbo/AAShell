@@ -146,3 +146,5 @@ To compare flags like dwFileAttributes we need to use bitwise and because the at
 In windows compiling changed code for my shell through the AAShell.exe would not work as exe files are locked when running and it would fail as long as we try and overwrite the exe file. In linux it would work but that does not mean the program is interrupted because it is already loaded into memory. So it would continue running and you would temporarily have two version of the exe file, one running in memory and one on the disk.
 
 While a lot of windows api structures seem to have unnecessary features and parameters, like cbsize on SHELLEXECUTEINFO where it hase to be sizeof(SHELLEXECUTEINFO), it could be because of backwards and forwards compatability. By setting the size future programs know not to read the first cbsize bytes and old programs will ignore bytes after cdsize. Otherwise one could accidentaly touch/access uninitialized memory.
+
+One can create a new ctrl+c handler. Question is how to give that function access to a handle to the new process one creates.

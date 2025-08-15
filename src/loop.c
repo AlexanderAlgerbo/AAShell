@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <windows.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include "commands.h"
 #include "logic.h"
 
@@ -13,8 +14,16 @@ typedef struct
   CommandHandler handler;
 } Command;
 
+PROCESS_INFORMATION procINFO = {0};
+
 void loop()
 {
+
+  // Before we do anything else we set the ctrl handler
+  if (!SetConsoleCtrlHandler(ctrlHandler, TRUE))
+  {
+    fprintf(stderr, "Failed to set Ctrlhandler");
+  }
 
   char *line;
   char **args;
@@ -234,17 +243,15 @@ int executeLine(char **args)
   }
 
   char *cmd = combineArgs(args);
-  PROCESS_INFORMATION procINFO;
   STARTUPINFO startInfo = {sizeof(startInfo)};
   if (CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &startInfo, &procINFO))
   {
-    printf("CreateProcess worked\n");
     WaitForSingleObject(procINFO.hProcess, INFINITE);
-    printf("We passed the wait for object\n");
     // Could get an exit code with DWORD exit and then GetExitCode(PROCESS Handle, &exit);
 
     CloseHandle(procINFO.hProcess);
     CloseHandle(procINFO.hThread);
+    procINFO.hProcess = NULL;
   }
   else
   {
@@ -294,5 +301,29 @@ void stringCopy(char *buffer, char *src)
   {
     buffer[i] = '\0';
     /* code */
+  }
+}
+
+BOOL WINAPI ctrlHandler(DWORD ctrlType)
+{
+  switch (ctrlType)
+  {
+  case CTRL_C_EVENT:
+    /* We check if our handle is active, if it is not closed we terminate the process.
+     */
+    if (procINFO.hProcess != NULL)
+    {
+      if (!TerminateProcess(procINFO.hProcess, 0))
+      {
+        fprintf(stderr, "Failed to terminate process, Error: %s \n", GetLastError());
+      }
+      else
+      {
+        printf("Terminated program successfully \n");
+      }
+    }
+    return TRUE;
+  default:
+    return FALSE;
   }
 }

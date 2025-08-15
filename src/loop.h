@@ -1,7 +1,7 @@
 #ifndef LOOP_H
 #define LOOP_H
 #include <windows.h>
-
+#include <stdio.h>
 // An array containing all the various lines we have sent to the terminal. And we can switch between all of them with up and down arrow keys.
 
 // Am not sure exactly what functions i will need at the moment except for myLoop.
@@ -27,7 +27,7 @@ void shiftTerminalStringRight(char *line, int pos);
 
 void stringCopy(char *buffer, char *src);
 
-char *combineArgs(char **args);
+BOOL WINAPI ctrlHandler(DWORD ctrlType);
 
 #endif
 

@@ -3,6 +3,7 @@
         "loop.h": "c",
         "*.rh": "c",
         "direct.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "stdio.h": "c"
     }
 }
