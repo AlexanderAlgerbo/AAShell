@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "commands.h"
 #include "logic.h"
+#include <unistd.h>
 
 typedef void (*CommandHandler)(char **args);
 
@@ -42,7 +43,16 @@ void loop()
   SetConsoleMode(hStdin, rawMode);
   do
   {
-    fputs("AA>", stdout);
+    char wd[PATH_MAX];
+    if (getcwd(wd, sizeof(wd)) != NULL)
+    {
+      printf("%s\nAA>", wd);
+    }
+    else
+    {
+      fprintf(stderr, "getcwd failed");
+    }
+
     line = readLine(hStdin, lines);
     args = parseLine(line);
     status = executeLine(args);
